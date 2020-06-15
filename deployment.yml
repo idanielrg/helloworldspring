@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # Deployment details
+  name: danielspring
+  namespace: default
+  labels:
+    app: danielspring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: danielspring
+  template:
+    metadata:
+      labels:
+        app: danielspring
+    spec:   
+      containers:
+      - name: danielspring
+        image: us.icr.io/danielrosasg/helloworldspring:latest # Image that needs to be deployed into C360 API - PD env
+        ports:
+        - containerPort: 8443 # Port used by the C360 application
+          protocol: TCP
+        - containerPort: 8080 # Port used by the Wildfly admin console
+          protocol: TCP
+---           
+apiVersion: v1
+kind: Service
+metadata:
+  # Service details
+  name: danielspring
+  namespace: default
+  labels:
+    app: danielspring
+spec:
+  type: NodePort
+  ports:
+   - port: 8443 # Port used by the C360 application
+     name: app-https
+     targetPort: 8443
+     nodePort: 31577     
+   - port: 8080 # Port used by the Wildfly admin console
+     name: mgmt-http
+     targetPort: 8080
+     nodePort: 31453
+  selector:
+   app: danielspring
+            

@@ -7,6 +7,10 @@ RUN mvn install
 
 ## APP
 FROM openjdk:8-jdk-alpine
+
+USER root
+RUN yum update -y && yum clean all
+
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 ARG JAR_FILE=target/gs-spring-boot-docker-0.1.0.jar
